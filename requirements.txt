@@ -29,12 +29,6 @@ MarkupSafe==0.23
 pefile==2019.4.18
 Pillow==6.2.0
 pycparser==2.20
-pygame==1.9.6
-PyInstaller==3.5
-PyQt5==5.13.0
-PyQt5-sip==4.19.19
-PyQt5-stubs==5.13.0.1
-pyqt5-tools==5.13.0.1.5
 python-dateutil==2.8.1
 python-dotenv==0.10.3
 python-editor==1.0.4
