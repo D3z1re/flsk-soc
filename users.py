@@ -50,6 +50,7 @@ def login():
 
 
 @users.route('/user/<int:id>')
+@login_required
 def user_page(id):
     session = db_session.create_session()
     user = session.query(User).filter(User.id == id).first()

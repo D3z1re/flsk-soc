@@ -16,7 +16,7 @@ import post_resources
 app = Flask(__name__)
 api = Api(app)
 login_manager = LoginManager()
-login_manager.login_view = 'login'
+login_manager.login_view = '/login'
 login_manager.login_message_category = 'info'
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -45,7 +45,7 @@ def main():
         session = db_session.create_session()
         return session.query(User).get(user_id)
 
-    app.run(debug=True)
+    app.run()
 
 
 if __name__ == '__main__':
