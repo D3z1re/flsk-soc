@@ -18,6 +18,51 @@
             <p class="article-content">{{ post.content }}</p>
         </div>
     </article>
+    
+    <div class="content-section">
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            {{ form.csrf_token }}
+            <fieldset class="form-group">
+                <div class="form-group">
+                    {{ form.text.label(class="form-control-label") }}
+                    {% if form.text.errors %}
+                        {{ form.text(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.text.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.text(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    	</div>
+    <div class="content-section">
+    	<h3>Comments</h3>
+    	{% for comment in comments %}
+    		<article class="media content-section">
+        		<img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + comment.user.image_file) }}">
+        		<div class="media-body">
+        			<div class="article-metadata">
+        				<a class="mr-2" href="/user/{{ comment.user.id }}">{{ comment.user.username }}</a>
+        				<small class="text-muted">{{ comment.created_date.replace(microsecond=0).isoformat(' ') }}</small>
+        			</div>
+            		{{ comment.text }}
+        		</div>
+        		{% if comment.user == current_user %}
+            		<div>
+            			<a class="btn btn-danger btn-sm m-1" href="/delete_comment/{{ comment.id }}">Delete</a>
+            		</div>
+            	{% endif %}
+    		</article>
+    	{% endfor %}
+	</div>
     <!-- Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

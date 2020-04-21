@@ -7,35 +7,46 @@ from data.post import Post, PostForm
 from data.user import User
 from data.relationship import Relationship
 from data.search import SearchByTitleForm
+from data.comment import Comment, CommentForm
 
 
 posts = Blueprint('posts', __name__)
 
 
-@posts.route('/add_post', methods=['GET', 'POST'])
+@posts.route('/post/<int:id>', methods=['GET', 'POST'])
 @login_required
-def add_post():
-    form = PostForm()
-    if form.validate_on_submit():
-        session = db_session.create_session()
-        post = Post()
-        post.title = form.title.data
-        post.content = form.content.data
-        post.is_private = form.is_private.data
-        current_user.posts.append(post)
-        session.merge(current_user)
-        session.commit()
-        flash('Your post has ben created!', 'success')
-        return redirect('/')
-    return render_template('edit_post.html', title='Add post',
-                           form=form)
-
-
-@posts.route('/post/<int:id>')
 def show_post(id):
+    form = CommentForm()
+    if form.validate_on_submit():
+        if form.text.data:
+            session = db_session.create_session()
+            comment = Comment()
+            comment.from_user = current_user.id
+            comment.text = form.text.data
+            comment.to_post = session.query(Post.id).filter(Post.id == id).first()[0]
+            session.add(comment)
+            session.commit()
+            return redirect(f'/post/{id}')
     session = db_session.create_session()
     post = session.query(Post).filter(Post.id == id).first()
-    return render_template('post.html', title=post.title, post=post)
+    comments = session.query(Comment).filter(Comment.to_post == post.id).all()
+    return render_template('post.html', title=post.title, post=post, form=form, comments=comments)
+
+
+@posts.route('/delete_comment/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_comment(id):
+    session = db_session.create_session()
+    comment = session.query(Comment).filter(Comment.id == id,
+                                            Comment.user == current_user).first()
+    if comment:
+        post_id = comment.to_post
+        session.delete(comment)
+        session.commit()
+        flash('Your comment has been deleted!', 'success')
+        return redirect(f'/post/{post_id}')
+    else:
+        abort(404)
 
 
 @posts.route("/", methods=['GET', 'POST'])
@@ -89,6 +100,25 @@ def following_posts():
     return render_template('following_posts.html', title='Following Posts', posts=posts, form=form)
 
 
+@posts.route('/add_post', methods=['GET', 'POST'])
+@login_required
+def add_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        session = db_session.create_session()
+        post = Post()
+        post.title = form.title.data
+        post.content = form.content.data
+        post.is_private = form.is_private.data
+        current_user.posts.append(post)
+        session.merge(current_user)
+        session.commit()
+        flash('Your post has ben created!', 'success')
+        return redirect('/')
+    return render_template('edit_post.html', title='Add post',
+                           form=form)
+
+
 @posts.route('/post/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_post(id):
@@ -122,7 +152,7 @@ def edit_post(id):
 
 @posts.route('/post/<int:id>/delete', methods=['GET', 'POST'])
 @login_required
-def post_delete(id):
+def delete_post(id):
     session = db_session.create_session()
     post = session.query(Post).filter(Post.id == id,
                                       Post.user == current_user).first()

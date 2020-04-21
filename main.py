@@ -45,7 +45,7 @@ def main():
         session = db_session.create_session()
         return session.query(User).get(user_id)
 
-    app.run()
+    app.run(debug=True)
 
 
 if __name__ == '__main__':
