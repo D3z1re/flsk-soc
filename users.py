@@ -19,16 +19,17 @@ import secrets
 users = Blueprint('users', __name__)
 
 
+# Функция добавления картинки на аккаунт
 def save_picture(picture):
     from main import app
-    hex = secrets.token_hex(8)
+    hex = secrets.token_hex(8)    # Генерирование случайного названия для картинки
     f_name, f_ext = os.path.splitext(picture.filename)
     picture_fn = hex + f_ext
     picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
-    size = (125, 125)
+    size = (125, 125)    # Заданный размер изображения
     img = Image.open(picture)
-    img.thumbnail(size)
-    img.save(picture_path)
+    img.thumbnail(size)    # Сжатие картинки до заданного размера
+    img.save(picture_path)    # Сохранение
 
     return picture_fn
 

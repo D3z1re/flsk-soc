@@ -156,7 +156,10 @@ def delete_post(id):
     session = db_session.create_session()
     post = session.query(Post).filter(Post.id == id,
                                       Post.user == current_user).first()
+    comments = session.query(Comment).filter(Comment.to_post == post.id).all()
     if post:
+        for comment in comments:
+            session.delete(comment)
         session.delete(post)
         session.commit()
         flash('Your post has been deleted!', 'success')

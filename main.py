@@ -12,7 +12,7 @@ from handlers import errors
 import users_resources
 import post_resources
 
-
+# Config
 app = Flask(__name__)
 api = Api(app)
 login_manager = LoginManager()
@@ -22,7 +22,7 @@ login_manager.init_app(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
-
+# Api
 # для списка объектов
 api.add_resource(users_resources.UsersListResource, '/api/users')
 # для одного объекта
@@ -35,7 +35,9 @@ api.add_resource(post_resources.PostResource, '/api/posts/<int:post_id>')
 
 
 def main():
+    # Подключение базы данных sqlite3
     db_session.global_init("db/soc.sqlite")
+    # подключение блюпринтов
     app.register_blueprint(users)
     app.register_blueprint(posts)
     app.register_blueprint(errors)
