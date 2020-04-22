@@ -1,8 +1,9 @@
-from flask_restful import reqparse, abort, Resource
+from flask_restful import abort, Resource
 from flask import jsonify
 
 from data import db_session
 from data.post import Post
+from data.posts_reqparse import parser
 
 
 def abort_if_post_not_found(post_id):
@@ -18,7 +19,7 @@ class PostResource(Resource):
         session = db_session.create_session()
         post = session.query(Post).get(post_id)
         return jsonify({'post': post.to_dict(
-            only=('title', 'content', 'user_id', 'is_private'))})
+            only=('id', 'title', 'content', 'user_id', 'is_private'))})
 
     def delete(self, post_id):
         abort_if_post_not_found(post_id)
@@ -29,19 +30,12 @@ class PostResource(Resource):
         return jsonify({'success': 'OK'})
 
 
-parser = reqparse.RequestParser()
-parser.add_argument('title', required=True)
-parser.add_argument('content', required=True)
-parser.add_argument('is_private', required=True)
-parser.add_argument('user_id', required=True, type=int)
-
-
 class PostListResource(Resource):
     def get(self):
         session = db_session.create_session()
         post = session.query(Post).all()
         return jsonify({'post': [item.to_dict(
-            only=('title', 'content', 'user_id', 'is_private')) for item in post]})
+            only=('id', 'title', 'content', 'user_id', 'is_private')) for item in post]})
 
     def post(self):
         args = parser.parse_args()
@@ -49,8 +43,8 @@ class PostListResource(Resource):
         post = Post(
             title=args['title'],
             content=args['content'],
-            user_id=args['user_id'],
-            is_private=args['is_private']
+            is_private=args['is_private'],
+            user_id=args['user_id']
         )
         session.add(post)
         session.commit()
