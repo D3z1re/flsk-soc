@@ -29,7 +29,7 @@ def show_post(id):
             return redirect(f'/post/{id}')
     session = db_session.create_session()
     post = session.query(Post).filter(Post.id == id).first()
-    comments = session.query(Comment).filter(Comment.to_post == post.id).all()
+    comments = session.query(Comment).filter(Comment.to_post == post.id).order_by(Post.created_date.desc())
     return render_template('post.html', title=post.title, post=post, form=form, comments=comments)
 
 
