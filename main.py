@@ -1,11 +1,9 @@
-from flask import Flask, render_template
-from flask_login import LoginManager, current_user
+from flask import Flask
+from flask_login import LoginManager
 from flask_restful import Api
 
 from data import db_session
-from data.post import Post
 from data.user import User
-from data.relationship import Relationship
 from users import users
 from posts import posts
 from handlers import errors

@@ -23,7 +23,6 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
 
     def __repr__(self):
         return f'<User> {self.id} {self.username} {self.email}'
-
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
 
