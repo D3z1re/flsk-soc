@@ -23,7 +23,7 @@ future==0.18.2
 geocoder==1.38.1
 idna==2.8
 itsdangerous==0.24
-Jinja2==2.11.2
+Jinja2==2.11.3
 Mako==1.1.2
 MarkupSafe==0.23
 pefile==2019.4.18
